@@ -17,7 +17,9 @@ enum WeekDay {
   });
 
   static WeekDay fromCode(int code) {
-    return WeekDay.values
-        .firstWhere((d) => d.code == code, orElse: () => WeekDay.monday);
+    return WeekDay.values.firstWhere(
+      (d) => d.code == code,
+      orElse: () => WeekDay.monday,
+    );
   }
 }

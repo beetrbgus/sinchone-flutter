@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:todo/weekday.dart';
 
 final dateformatter = DateFormat("yyyy-MM-dd");
 
-class Todo extends StatefulWidget {
-  const Todo({super.key});
+class TodoMain extends StatefulWidget {
+  const TodoMain({super.key});
 
   @override
   State<StatefulWidget> createState() => _TodoState();
 }
 
-class _TodoState extends State<Todo> with SingleTickerProviderStateMixin {
+class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
   String _nowDay() {
     var now = DateTime.now();
     WeekDay weekDay = WeekDay.fromCode(now.weekday);
@@ -20,20 +19,20 @@ class _TodoState extends State<Todo> with SingleTickerProviderStateMixin {
     return "${now.month}월 ${now.day}일 ${weekDay.displayName}";
   }
 
-  late TabController tabController;
+  late TabController _tabController;
 
   @override
   void initState() {
-    tabController = TabController(
-      length: 3,
+    _tabController = TabController(
+      length: 2,
       vsync: this,
-      initialIndex: 0,
     );
+    super.initState();
   }
 
   @override
   void dispose() {
-    tabController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -62,7 +61,7 @@ class _TodoState extends State<Todo> with SingleTickerProviderStateMixin {
               height: 50,
             ),
             TabBar(
-              controller: tabController,
+              controller: _tabController,
               labelColor: Colors.black45,
               labelStyle: const TextStyle(
                 fontWeight: FontWeight.bold,
@@ -72,7 +71,7 @@ class _TodoState extends State<Todo> with SingleTickerProviderStateMixin {
               unselectedLabelStyle: const TextStyle(
                 fontSize: 19,
               ),
-              indicatorWeight: 3,
+              indicatorWeight: 2,
               indicatorColor: const Color.fromARGB(255, 10, 197, 184),
               tabs: const [
                 Tab(
@@ -84,6 +83,19 @@ class _TodoState extends State<Todo> with SingleTickerProviderStateMixin {
                   height: 30,
                 ),
               ],
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  Container(
+                    color: Colors.green,
+                  ),
+                  Container(
+                    color: Colors.blue[200],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
