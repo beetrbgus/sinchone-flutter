@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:todo/models/todo.dart';
+
+final dateformatter = DateFormat("yyyy-MM-dd");
 
 class TodoItem extends StatelessWidget {
   const TodoItem(
     this.todo, {
     super.key,
   });
-
+  final bool _isChekced = false;
   final Todo todo;
   @override
   Widget build(BuildContext context) {
@@ -18,9 +21,30 @@ class TodoItem extends StatelessWidget {
               horizontal: 20,
               vertical: 16,
             ),
-            child: Column(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(todo.content),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      value: _isChekced,
+                      onChanged: (value) {},
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(todo.content),
+                        Text(todo.category.name),
+                      ],
+                    ),
+                  ],
+                ),
+                Text(dateformatter.format(todo.deadline)),
               ],
             ),
           )

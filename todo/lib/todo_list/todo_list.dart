@@ -5,20 +5,20 @@ import 'package:todo/todo_list/todo_item.dart';
 class TodoList extends StatelessWidget {
   const TodoList({
     super.key,
-    required this.expenses,
+    required this.todos,
   });
 
-  final List<Todo> expenses;
+  final List<Todo> todos;
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: expenses.length,
+      itemCount: todos.length,
       itemBuilder: (context, index) => Dismissible(
         key: ValueKey(
-          expenses[index],
+          todos[index],
         ),
         child: TodoItem(
-          expenses[index],
+          todos[index],
         ),
       ),
     );
