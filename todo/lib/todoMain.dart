@@ -14,8 +14,7 @@ class TodoMain extends StatefulWidget {
 }
 
 class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
-  final _taskController = TextEditingController();
-  List<Todo> todos = [
+  final List<Todo> _todos = [
     Todo(
       content: "zzzz",
       deadline: DateTime.now(),
@@ -44,7 +43,10 @@ class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
     return "${now.month}월 ${now.day}일 ${weekDay.displayName}";
   }
 
+  late DateTime _selectDueDate;
   late TabController _tabController;
+  Category? _selectedCategory;
+  final _taskController = TextEditingController();
 
   @override
   void initState() {
@@ -59,6 +61,44 @@ class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void _addTodo(Todo todo) {
+    setState(() {
+      _todos.add(todo);
+    });
+  }
+
+  // 저장 버튼 클릭시 일어나는 함수
+  void _submitTodoData() {
+    final inputTask = _taskController.text;
+
+    if (inputTask.trim().isEmpty || _selectedCategory == null) {
+      // 에러 메시지
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("유효하지 않은 입력값이 있습니다."),
+          content: const Text('입력값을 다시 한번 확인한 후 제출해주세요.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("확인!"),
+            )
+          ],
+        ),
+      );
+    }
+
+    _addTodo(
+      Todo(
+        content: inputTask,
+        deadline: _selectDueDate,
+        category: _selectedCategory!,
+      ),
+    );
   }
 
   @override
@@ -113,7 +153,7 @@ class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    TodoList(todos: todos),
+                    TodoList(todos: _todos),
                     Container(
                       color: Colors.blue[200],
                     ),
@@ -123,18 +163,66 @@ class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(1.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _taskController,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2024),
+                                lastDate: DateTime(2025),
+                              ).then((selectDate) {
+                                setState(() {
+                                  _selectDueDate = selectDate!;
+                                });
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.date_range_outlined,
+                            ),
+                          ),
+                          DropdownButton(
+                            value:
+                                _selectedCategory, // 선택된 값이 보여짐. items 안에서 선택하는 것
+                            items: Category.values
+                                .map(
+                                  (category) => DropdownMenuItem(
+                                    value: category,
+                                    child: Row(
+                                      children: [
+                                        Icon(categoryIconse[category]),
+                                        Text(category.name),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedCategory = value;
+                              });
+                            },
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.save),
-                      )
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _taskController,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: _submitTodoData,
+                            icon: const Icon(Icons.save),
+                          )
+                        ],
+                      ),
                     ],
                   ),
                 ),
