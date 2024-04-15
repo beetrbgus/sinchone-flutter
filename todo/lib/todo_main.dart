@@ -19,23 +19,28 @@ class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
       content: "zzzz",
       deadline: DateTime.now(),
       category: Category.important,
+      isCompleted: false,
     ),
     Todo(
       content: "zzzz",
       deadline: DateTime.now(),
       category: Category.important,
+      isCompleted: false,
     ),
     Todo(
       content: "zzzz",
       deadline: DateTime.now(),
       category: Category.important,
+      isCompleted: false,
     ),
     Todo(
       content: "zzzz",
       deadline: DateTime.now(),
       category: Category.important,
+      isCompleted: false,
     ),
   ];
+  final List<Todo> _completeJob = [];
   String _nowDay() {
     var now = DateTime.now();
     WeekDay weekDay = WeekDay.fromCode(now.weekday);
@@ -69,10 +74,24 @@ class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
     });
   }
 
+  void _completeTodo(Todo todo) {
+    setState(() {
+      _todos.remove(todo);
+      _completeJob.add(todo); // 완료된 작업 리스트에 추가
+    });
+  }
+
+  void _willComplete(Todo todo) {
+    setState(() {
+      _completeJob.remove(todo); // 완료된 작업 리스트에서 제거
+      _todos.add(todo); // 할 일 리스트에 추가
+    });
+  }
+
   // 저장 버튼 클릭시 일어나는 함수
   void _submitTodoData() {
     final inputTask = _taskController.text;
-
+    // 항목 선택하지 않았을 때 유효성 검사
     if (inputTask.trim().isEmpty || _selectedCategory == null) {
       // 에러 메시지
       showDialog(
@@ -97,6 +116,7 @@ class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
         content: inputTask,
         deadline: _selectDueDate,
         category: _selectedCategory!,
+        isCompleted: false,
       ),
     );
   }
@@ -153,9 +173,13 @@ class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    TodoList(todos: _todos),
-                    Container(
-                      color: Colors.blue[200],
+                    TodoList(
+                      todos: _todos,
+                      onComplete: _completeTodo,
+                    ),
+                    TodoList(
+                      todos: _completeJob,
+                      onComplete: _willComplete,
                     ),
                   ],
                 ),

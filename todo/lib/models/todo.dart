@@ -4,11 +4,13 @@ class Todo {
   final String content;
   final DateTime deadline;
   final Category category;
+  final bool isCompleted;
 
   Todo({
     required this.content,
     required this.deadline,
     required this.category,
+    required this.isCompleted,
   });
 }
 

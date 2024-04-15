@@ -8,9 +8,12 @@ class TodoItem extends StatelessWidget {
   const TodoItem(
     this.todo, {
     super.key,
+    required this.onTodoComplete,
   });
   final bool _isChekced = false;
   final Todo todo;
+  final Function(Todo) onTodoComplete;
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -33,7 +36,9 @@ class TodoItem extends StatelessWidget {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       value: _isChekced,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        onTodoComplete(todo);
+                      },
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
