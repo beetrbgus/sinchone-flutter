@@ -48,7 +48,7 @@ class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
     return "${now.month}월 ${now.day}일 ${weekDay.displayName}";
   }
 
-  late DateTime _selectDueDate;
+  DateTime? _selectDueDate;
   late TabController _tabController;
   Category? _selectedCategory;
   final _taskController = TextEditingController();
@@ -114,7 +114,7 @@ class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
     _addTodo(
       Todo(
         content: inputTask,
-        deadline: _selectDueDate,
+        deadline: _selectDueDate!,
         category: _selectedCategory!,
         isCompleted: false,
       ),
@@ -208,6 +208,13 @@ class _TodoState extends State<TodoMain> with SingleTickerProviderStateMixin {
                             icon: const Icon(
                               Icons.date_range_outlined,
                             ),
+                          ),
+                          Text(
+                            _selectDueDate == null
+                                ? ""
+                                : _selectDueDate!
+                                    .toIso8601String()
+                                    .split("T")[0],
                           ),
                           DropdownButton(
                             value:
